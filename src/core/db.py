@@ -13,7 +13,8 @@ async def init_db():
     await init_beanie(
         database=client[settings.mongo_db_name], 
         document_models=[
-            models.EventModel,
-            models.SubscriptionModel
+            models.BookModel,
+            models.PersonModel,
+            models.BookRentalModel
         ]
     )

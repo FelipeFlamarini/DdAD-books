@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: book-rental-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: changeme
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - book-rental-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: book-rental-rabbitmq
+    restart: unless-stopped
+    ports: 
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - book-rental-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: book-rental-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.local
+    environment:
+      - MONGO_URI=mongodb://root:changeme@mongodb:27017
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - book-rental-network
+    volumes:
+      - ./src:/app/src
+      - ./workers:/app/workers
+
+  notification-worker:
+    build:
+      context: .
+      dockerfile: notification_worker.Dockerfile
+    container_name: book-rental-notification-worker
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      - MONGO_URI=mongodb://root:changeme@mongodb:27017
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - book-rental-network
+    volumes:
+      - ./src:/app/src
+      - ./workers:/app/workers
+
+  email-worker:
+    build:
+      context: .
+      dockerfile: email_worker.Dockerfile
+    container_name: book-rental-email-worker
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      - MONGO_URI=mongodb://root:changeme@mongodb:27017
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - book-rental-network
+    volumes:
+      - ./src:/app/src
+      - ./workers:/app/workers
+
+
+volumes:
+  mongodb_data:
+  rabbitmq_data:
+
+networks:
+  book-rental-network:
+    driver: bridge

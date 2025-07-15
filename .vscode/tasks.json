@@ -2,16 +2,81 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "(dev) Run fastapi server",
+            "label": "(dev) Start all services with Docker",
             "type": "shell",
-            "command": "dotenvx run -f .env.local  -- fastapi dev src/app.py --host 0.0.0.0",
+            "command": "./scripts/start-dev.sh",
+            "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "(dev) Run email worker",
+            "label": "(dev) Stop all services",
             "type": "shell",
-            "command": "dotenvx run -f .env.local -- poetry run python workers/email_worker.py",
+            "command": "./scripts/stop-dev.sh",
+            "group": "build",
             "problemMatcher": []
         },
+        {
+            "label": "(prod) Start all services with Docker",
+            "type": "shell",
+            "command": "./scripts/start-prod.sh",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "(prod) Stop all services",
+            "type": "shell",
+            "command": "./scripts/stop-prod.sh",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "(docker) View API logs",
+            "type": "shell",
+            "command": "docker-compose logs -f api",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "(docker) View email worker logs",
+            "type": "shell",
+            "command": "docker-compose logs -f email-worker",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "(docker) View notification worker logs",
+            "type": "shell",
+            "command": "docker-compose logs -f notification-worker",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "(docker) Rebuild and restart services",
+            "type": "shell",
+            "command": "docker-compose up --build -d",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "(local) Run fastapi server",
+            "type": "shell",
+            "command": "dotenvx run -f .env.local  -- fastapi dev src/app.py --host 0.0.0.0",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "(local) Run email worker",
+            "type": "shell",
+            "command": "dotenvx run -f .env.local -- poetry run python workers/email_worker.py",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "(local) Run book rental notification worker",
+            "type": "shell",
+            "command": "dotenvx run -f .env.local -- poetry run python workers/book_rental_notification_worker.py",
+            "group": "build",
+            "problemMatcher": []
+        }
     ]
 }

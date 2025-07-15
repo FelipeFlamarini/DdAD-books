@@ -231,25 +231,33 @@ class EmailQueueService:
                     .build()
                 )
 
-            case "event_registration":
+            case "book_overdue":
                 return (
-                    builder.add_header("Event Registration Confirmed")
-                    .add_text(f"Hello there!")
+                    builder.add_header("Overdue Book - Immediate Action Required")
+                    .add_text(f"Hello {template_data.get('name', 'there')},")
                     .add_text(
-                        f"Your registration for the event '{template_data.get('event_title', 'Unknown Event')}' has been confirmed!"
+                        f"Your borrowed book '{template_data.get('book_title', 'Unknown Book')}' is now overdue."
                     )
-                    .add_text(f"Event details:")
+                    .add_text(
+                        f"Original due date: {template_data.get('due_date', 'Unknown')}"
+                    )
+                    .add_text(
+                        "Please return the book immediately to avoid additional late fees."
+                    )
+                    .add_text(
+                        "If you need to extend your rental period, please contact us as soon as possible."
+                    )
+                    .add_divider()
+                    .add_text("Late fees may apply:")
                     .add_list(
                         [
-                            f"Title: {template_data.get('event_title', 'Unknown')}",
-                            f"Date: {template_data.get('event_date', 'Unknown')}",
-                            f"Description: {template_data.get('event_description', 'No description available')}",
+                            "First week overdue: $1.00 per day",
+                            "After one week: $2.00 per day",
+                            "Maximum late fee: $25.00 per book",
                         ]
                     )
-                    .add_text("We look forward to seeing you at the event!")
-                    .add_text(
-                        "If you have any questions, please contact our support team."
-                    )
+                    .add_text("Library hours: Monday-Friday 9:00 AM - 6:00 PM")
+                    .add_text("Drop-off box available 24/7 at the main entrance.")
                     .add_divider()
                     .add_text(f"Contact support: {support_email}")
                     .add_footer(f"© 2025 {company_name}")
