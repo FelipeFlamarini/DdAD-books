@@ -4,7 +4,7 @@ from src.api.modules.Person.PersonDtos import (
     PersonCreateDto,
     PersonResponseDto,
 )
-from src.core.exceptions import NotFoundException, ConflictException
+from src.core.exceptions import NotFoundException
 
 
 class PersonService:
@@ -39,7 +39,7 @@ class PersonService:
             address=person.address,
         )
 
-    async def get_all_persons(
+    async def get_all(
         self, skip: int = 0, limit: int = 100
     ) -> List[PersonResponseDto]:
         """Get all persons with pagination"""

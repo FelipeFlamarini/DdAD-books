@@ -33,4 +33,4 @@ async def get_people(
     service: PersonService = Depends(get_person_service),
 ):
     """Get all people with pagination"""
-    return await service.get_all_people(skip, limit)
+    return await service.get_all(skip, limit)
